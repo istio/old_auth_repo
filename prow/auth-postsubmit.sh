@@ -56,7 +56,7 @@ if [ "${CI:-}" == 'bootstrap' ]; then
 
     curl -s https://codecov.io/bash \
       | CI_JOB_ID="${JOB_NAME}" CI_BUILD_ID="${BUILD_NUMBER}" bash /dev/stdin \
-        -K -Z -B "${PULL_BASE_REF}" -C "${PULL_PULL_SHA}" -P "${PULL_NUMBER}" -t @/etc/codecov/auth.token
+        -K -Z -B "${PULL_BASE_REF}" -C "${GIT_SHA}" -P "${PULL_NUMBER}" -t @/etc/codecov/auth.token
 else
     echo "Not in bootstrap environment, skipping code coverage publishing"
 fi
