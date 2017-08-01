@@ -60,5 +60,5 @@ else
     echo "Not in bootstrap environment, skipping code coverage publishing"
 fi
 
-echo "=== Pusblish Docker image ==="
-bazel run //docker:istio-ca
+echo "=== Running e2e Tests ==="
+bin/e2e.sh --tag ${GIT_SHA} --hub 'gcr.io/istio-testing'
