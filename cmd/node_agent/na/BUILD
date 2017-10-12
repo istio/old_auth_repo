@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "config.go",
         "gcp.go",
+        "aws.go",
         "nafactory.go",
         "nodeagent.go",
         "onprem.go",
