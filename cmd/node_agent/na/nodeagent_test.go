@@ -64,6 +64,10 @@ func (f FakePlatformSpecificRequest) IsProperPlatform() bool {
 	return f.isProperPlatform
 }
 
+func (f FakePlatformSpecificRequest) GetAgentCredential() ([]byte, error) {
+	return []byte{}, nil
+}
+
 type FakeCAClient struct {
 	Counter  int
 	response *pb.Response

@@ -15,6 +15,8 @@
 package na
 
 import (
+	"bytes"
+	"io/ioutil"
 	"testing"
 )
 
@@ -52,12 +54,50 @@ func TestGetServiceIdentity(t *testing.T) {
 		if c.expectedErr != "" {
 			if err == nil {
 				t.Errorf("%s: no error is returned.", id)
-			}
-			if err.Error() != c.expectedErr {
+			} else if err.Error() != c.expectedErr {
 				t.Errorf("%s: incorrect error message: %s VS %s", id, err.Error(), c.expectedErr)
 			}
 		} else if identity != c.expectedID {
 			t.Errorf("%s: GetServiceIdentity returns identity: %s. It should be %s.", id, identity, c.expectedID)
+		}
+	}
+}
+
+func TestGetAgentCredential(t *testing.T) {
+	certFile := "testdata/cert-chain.pem"
+	certBytes, err := ioutil.ReadFile(certFile)
+	if err != nil {
+		t.Fatalf("unable to read file %s", certFile)
+	}
+
+	testCases := map[string]struct {
+		filename      string
+		expectedBytes []byte
+		expectedErr   string
+	}{
+		"Existing cert": {
+			filename:      certFile,
+			expectedBytes: certBytes,
+			expectedErr:   "",
+		},
+		"Missing cert": {
+			filename:      "testdata/fake-cert.pem",
+			expectedBytes: nil,
+			expectedErr:   "Failed to read cert file: testdata/fake-cert.pem",
+		},
+	}
+
+	for id, c := range testCases {
+		onprem := onPremPlatformImpl{c.filename}
+		cred, err := onprem.GetAgentCredential()
+		if c.expectedErr != "" {
+			if err == nil {
+				t.Errorf("%s: no error is returned.", id)
+			} else if err.Error() != c.expectedErr {
+				t.Errorf("%s: incorrect error message: %s VS %s", id, err.Error(), c.expectedErr)
+			}
+		} else if !bytes.Equal(cred, c.expectedBytes) {
+			t.Errorf("%s: GetAgentCredential returns bytes: %s. It should be %s.", id, cred, c.expectedBytes)
 		}
 	}
 }
