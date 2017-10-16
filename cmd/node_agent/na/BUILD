@@ -21,6 +21,8 @@ go_library(
         "@org_golang_google_grpc//:go_default_library",
         "@org_golang_google_grpc//credentials:go_default_library",
         "@org_golang_x_net//context:go_default_library",
+        "@com_github_aws_aws-sdk-go//aws/ec2metadata:go_default_library",
+        "@com_github_aws_aws-sdk-go//aws/session:go_default_library",
     ],
 )
 

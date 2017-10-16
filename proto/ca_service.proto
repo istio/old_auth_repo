@@ -42,6 +42,8 @@ message Request {
   bytes csr_pem = 1;
   // opaque credential for node agent
   bytes node_agent_credential = 2;
+  // type of the node_agent_credential (aws/gcp/onprem/custom...)
+  string credential_type = 3;
 }
 
 message Response {

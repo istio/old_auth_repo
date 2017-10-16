@@ -18,17 +18,15 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	cred "istio.io/auth/pkg/credential"
 )
 
 type awsPlatformImpl struct {
-	fetcher *cred.AwsTokenFetcher
+	client *ec2metadata.EC2Metadata
 }
 
-// This is extracted from the same function in gcp.go.
-// Should put the common logic elsewhere in the future.
 func (na *awsPlatformImpl) GetDialOptions(cfg *Config) ([]grpc.DialOption, error) {
 	creds, err := credentials.NewClientTLSFromFile(cfg.RootCACertFile, "")
 	if err != nil {
@@ -40,20 +38,31 @@ func (na *awsPlatformImpl) GetDialOptions(cfg *Config) ([]grpc.DialOption, error
 }
 
 func (na *awsPlatformImpl) IsProperPlatform() bool {
-	return na.fetcher.IsOnAWS()
+	return na.client.Available()
 }
 
 // Extract service identity from userdata. This function should be
 // pluggable for different AWS deployments in the future.
 func (na *awsPlatformImpl) GetServiceIdentity() (string, error) {
-	userdata, err := na.fetcher.GetUserData()
+	return "", nil
+}
+
+// GetAgentCredential retrieves the instance identity document as the
+// agent credential used by node agent
+func (na *awsPlatformImpl) GetAgentCredential() ([]byte, error) {
+	doc, err := na.client.GetInstanceIdentityDocument()
 	if err != nil {
-		return "", fmt.Errorf("Failed to get EC2 user data: %v", err)
+		return []byte{}, fmt.Errorf("Failed to get EC2 instance identity document: %v", err)
 	}
-	var dat map[string]string
-	err = json.Unmarshal([]byte(userdata), &dat)
+
+	bytes, err := json.Marshal(doc)
 	if err != nil {
-		return "", fmt.Errorf("Failed to get service identity: %v", err)
+		return []byte{}, fmt.Errorf("Failed to marshal identity document %v: %v", doc, err)
 	}
-	return dat["APIGEE_POD"], nil
+
+	return bytes, nil
+}
+
+func (na *awsPlatformImpl) GetCredentialType() string {
+	return "aws"
 }

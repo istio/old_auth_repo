@@ -6,7 +6,5 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
          "@com_google_cloud_go//compute/metadata:go_default_library",
-         "@com_github_aws_aws-sdk-go//aws/ec2metadata:go_default_library",
-         "@com_github_aws_aws-sdk-go//aws/session:go_default_library",
     ],
 )

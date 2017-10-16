@@ -67,6 +67,10 @@ func (na *onPremPlatformImpl) GetAgentCredential() ([]byte, error) {
 	return certBytes, nil
 }
 
+func (na *onPremPlatformImpl) GetCredentialType() string {
+	return "onprem"
+}
+
 // getTLSCredentials creates transport credentials that are common to
 // node agent and CA.
 func getTLSCredentials(certificateFile string, keyFile string,

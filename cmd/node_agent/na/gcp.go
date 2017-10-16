@@ -82,3 +82,7 @@ func (na *gcpPlatformImpl) GetAgentCredential() ([]byte, error) {
 
 	return []byte(jwtKey), nil
 }
+
+func (na *gcpPlatformImpl) GetCredentialType() string {
+	return "gcp"
+}
